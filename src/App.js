@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./Components/Landing";
 import LoadingPage from "./Components/LoadingPage"; // Import your LoadingPage component
 import Predictbill from "./Components/Predictbill";
-
+import Recommendation from "./Components/Recommendation";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); // State for loading
@@ -25,6 +25,7 @@ function App() {
          
           {/* Add more routes here as needed */}
           <Route path="/predict" element={<Predictbill />} /> 
+          <Route path="/recommendation" element={<Recommendation />} />
         </Routes>
       )}
     </Router>

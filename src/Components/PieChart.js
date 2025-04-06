@@ -27,7 +27,7 @@ function PieChart({ data }) {
     datasets: [
       {
         data: consumptionData, // Sum of consumption for each device
-        backgroundColor: ["#FF5733", "#33FF57", "#3357FF", "#FF33B5"], // 4 colors to match the number of devices
+        backgroundColor: ["#a79aff", "#bffcc6", "#85e3ff", "#ffabab"], // 4 colors to match the number of devices
         borderColor: "#FFFFFF", // Border color for slices
         borderWidth: 1,
       },
@@ -43,6 +43,10 @@ function PieChart({ data }) {
           usePointStyle: true, // Use circular points for colors
           pointStyle: "circle", // Set the shape of the legend's colors to circles
           boxWidth: 10, // Control the size of the circular point
+          font: {
+            size: 15, // Increase legend label font size
+            weight: 700,
+          },
         },
       },
       tooltip: {
@@ -58,7 +62,7 @@ function PieChart({ data }) {
   };
 
   return (
-    <div className="h-64 w-80 mx-auto">
+    <div className="h-64 w-85 mx-auto">
       <Pie data={chartData} options={options} /> {/* Render the Pie chart */}
     </div>
   );

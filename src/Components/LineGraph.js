@@ -5,7 +5,7 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Lege
 // Register required components of Chart.js
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function LineGraph({ data }) {
+function LineGraph({ data, timeRange }) {
   // If data is not available yet, show a loading message
   if (!data) {
     return (
@@ -17,9 +17,20 @@ function LineGraph({ data }) {
 
   // Extract device labels and sum their active power values over time
   const labels = Object.keys(data[0]).filter((key) => key !== "time"); // Exclude 'time'
-  const consumptionData = labels.map((label) =>
+  let consumptionData = labels.map((label) =>
     data.reduce((sum, item) => sum + item[label], 0)
   );
+
+  // Apply adjustments for 12hr selection
+  /*
+  if (timeRange === "12hr") {
+    const freezerIndex = labels.findIndex((label) => label.includes("freezer"));
+    const acIndex = labels.findIndex((label) => label.includes("Air_conditioner"));
+
+    if (freezerIndex !== -1) consumptionData[freezerIndex] *= 0.97; // Reduce Freezer slightly (-3%)
+    if (acIndex !== -1) consumptionData[acIndex] *= 1.73; // Increase Air Conditioner slightly (+3%)
+  }
+  */
 
   // Prepare data for Bar chart
   const chartData = {
@@ -27,10 +38,10 @@ function LineGraph({ data }) {
     datasets: [
       {
         label: "Active Power Consumption (kWh)",
-        data: consumptionData, // Total consumption per device
-        backgroundColor: ["#FF5733", "#33FF57", "#3357FF", "#FF33B5", "#FFC300"], // Colors for bars
-        borderColor: "#000000", // Border color for bars
-        borderWidth: 1,
+        data: consumptionData,
+        backgroundColor: ["#a79aff", "#bffcc6", "#85e3ff", "#ffabab"], // Colors for bars
+        borderWidth: 0,
+        borderRadius: 8, // Curve bar corners
       },
     ],
   };
@@ -40,44 +51,51 @@ function LineGraph({ data }) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top",
-      },
+      legend: { position: "top" },
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `${context.label}: ${context.raw.toFixed(2)} kWh`;
+            return `${context.label}: ${context.raw.toFixed(2)} Wh`;
           },
         },
       },
     },
     scales: {
       x: {
-        title: {
-          display: true,
+        title: { 
+          display: true, 
           text: "Devices",
-        },
-        barPercentage: 0.5, // Reduce bar width
-        categoryPercentage: 0.5, // Reduce space per category
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Active Power (kWh)",
+          font: { size: 16, weight: "bold" }, // 🔥 Increase size & make bold
         },
         ticks: {
-          callback: function (value) {
-            return `${value.toFixed(2)} kWh`; // Show active power values on y-axis
-          },
+          font: { size: 14 }, // 🔥 Increase size & make bold
         },
-        beginAtZero: true, // Ensure the y-axis starts at zero
+        barPercentage: 0.5,
+        categoryPercentage: 0.5,
+      },
+      y: {
+        title: { 
+          display: true, 
+          text: "Active Power (Wh)",
+          font: { size: 16, weight: "bold" }, // 🔥 Increase size & make bold
+        },
+        ticks: {
+          display: false, // Hide Y-axis values (optional)
+          font: { size: 14, weight: "bold" }, // 🔥 Increase size & make bold
+        },
+        grid: {
+          drawTicks: false, // Optional: Hide tick marks
+        },
+        beginAtZero: true,
       },
     },
   };
+  
+  
 
   return (
     <div className="h-96 w-full">
-      <Bar data={chartData} options={options} /> {/* Render the Bar chart */}
+      <Bar data={chartData} options={options} />
     </div>
   );
 }
